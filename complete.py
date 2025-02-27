@@ -35,6 +35,7 @@ def identify_topics(texts, n_topics=2, n_top_words=5):
         topics.append("Topic %d: %s" % (idx, ", ".join(terms)))
     return topics
 
+
 tweet_content = "France is in europe"
 
 print("Contenu du tweet : ", tweet_content)
@@ -60,7 +61,6 @@ def scrape_news(topics, websites):
         for link in soup.find_all('a', href=True):
             link_text = link.text.strip().lower()
 
-
             if all(topic.lower() in link_text for topic in topics):
                 articles.append({'title': link.text.strip(), 'url': link['href']})
 
@@ -73,5 +73,3 @@ articles = scrape_news(topics, websites)
 
 for article in articles:
     print(f"Title: {article['title']}, URL: {article['url']}")
-
-
