@@ -31,8 +31,8 @@ def identify_topics(texts, n_topics=2, n_top_words=5):
 
     topics = []
     for idx, topic in enumerate(lda.components_):
-        terms = [vectorizer.get_feature_names_out()[i] 
-                for i in topic.argsort()[:-n_top_words - 1:-1]]
+        terms = [vectorizer.get_feature_names_out()[i]
+                 for i in topic.argsort()[:-n_top_words - 1:-1]]
         topics.append("Topic %d: %s" % (idx, ", ".join(terms)))
     return topics
 
