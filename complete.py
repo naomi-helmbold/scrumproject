@@ -4,9 +4,9 @@ from sklearn.decomposition import LatentDirichletAllocation
 import requests
 from bs4 import BeautifulSoup
 
+
 # Fonction pour analyser les sentiments avec TextBlob
 def analyze_sentiment(text):
-
 
     blob = TextBlob(text)
 
@@ -19,6 +19,7 @@ def analyze_sentiment(text):
         return 'Négatif'
     else:
         return 'Neutre'
+
 
 # Fonction pour identifier le sujet avec Latent Dirichlet Allocation (LDA)
 def identify_topics(texts, n_topics=2, n_top_words=5):
@@ -48,9 +49,10 @@ print("Sujets identifiés :")
 for topic in topics:
     print(topic)
 
+
 # Fonction pour scraper les articles de news
 def scrape_news(topics, websites):
-    articles = []  
+    articles = []
     for website in websites:
         response = requests.get(website)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -64,10 +66,12 @@ def scrape_news(topics, websites):
 
     return articles
 
+
 topics = ['France', 'Europe']
 websites = ['https://www.bbc.com/news', 'https://www.cnn.com', 'https://www.wikipedia.org/', 'https://www.lemonde.fr/', 'https://www.washingtonpost.com/', 'https://www.foxnews.com/', 'https://www.nbcnews.com/']
 articles = scrape_news(topics, websites)
 
 for article in articles:
     print(f"Title: {article['title']}, URL: {article['url']}")
+
 
