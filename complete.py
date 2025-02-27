@@ -1,4 +1,3 @@
-import re
 from textblob import TextBlob
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
@@ -7,9 +6,13 @@ from bs4 import BeautifulSoup
 
 # Fonction pour analyser les sentiments avec TextBlob
 def analyze_sentiment(text):
+
+
     blob = TextBlob(text)
-    sentiment = blob.sentiment.polarity  # Retourne une valeur entre -1 (négatif) et 1 (positif)
-    
+
+    # Retourne une valeur entre -1 (négatif) et 1 (positif)
+    sentiment = blob.sentiment.polarity
+
     if sentiment > 0:
         return 'Positif'
     elif sentiment < 0:
@@ -21,10 +24,10 @@ def analyze_sentiment(text):
 def identify_topics(texts, n_topics=2, n_top_words=5):
     vectorizer = CountVectorizer(stop_words='english')
     dtm = vectorizer.fit_transform(texts)
-    
+
     lda = LatentDirichletAllocation(n_components=n_topics, random_state=0)
     lda.fit(dtm)
-    
+
     topics = []
     for idx, topic in enumerate(lda.components_):
         terms = [vectorizer.get_feature_names_out()[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
