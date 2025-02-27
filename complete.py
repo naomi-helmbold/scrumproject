@@ -31,7 +31,8 @@ def identify_topics(texts, n_topics=2, n_top_words=5):
 
     topics = []
     for idx, topic in enumerate(lda.components_):
-        terms = [vectorizer.get_feature_names_out()[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
+        terms = [vectorizer.get_feature_names_out()[i] 
+                for i in topic.argsort()[:-n_top_words - 1:-1]]
         topics.append("Topic %d: %s" % (idx, ", ".join(terms)))
     return topics
 
@@ -62,13 +63,20 @@ def scrape_news(topics, websites):
             link_text = link.text.strip().lower()
 
             if all(topic.lower() in link_text for topic in topics):
-                articles.append({'title': link.text.strip(), 'url': link['href']})
+                articles.append({'title': link.text.strip(),
+                                 'url': link['href']})
 
     return articles
 
 
 topics = ['France', 'Europe']
-websites = ['https://www.bbc.com/news', 'https://www.cnn.com', 'https://www.wikipedia.org/', 'https://www.lemonde.fr/', 'https://www.washingtonpost.com/', 'https://www.foxnews.com/', 'https://www.nbcnews.com/']
+websites = ['https://www.bbc.com/news',
+            'https://www.cnn.com',
+            'https://www.wikipedia.org/',
+            'https://www.lemonde.fr/',
+            'https://www.washingtonpost.com/',
+            'https://www.foxnews.com/',
+            'https://www.nbcnews.com/']
 articles = scrape_news(topics, websites)
 
 for article in articles:
