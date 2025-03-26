@@ -65,12 +65,13 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tweet: tweet })
         });
-        
+
         let data = await response.text();
         document.getElementById("results").innerHTML = `<p><strong>Tweet:</strong> ${text}</p>`;
     }
 
     function displayResults(data) {
+        `<p><strong>Tweet:</strong> </p>`
         document.getElementById("results").innerHTML = `<p><strong>Tweet:</strong> ${data.tweet}</p>`;
     }
         
