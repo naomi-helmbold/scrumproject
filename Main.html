@@ -3,83 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List Manager</title>
+    <title>Fact Checker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            text-align: center;
+            padding: 20px;
         }
         .container {
-            background: #fff;
+            max-width: 600px;
+            margin: auto;
+            background: white;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            text-align: center;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            background: #f9f9f9;
-            margin: 5px 0;
+        textarea {
+            width: 80%;
             padding: 10px;
-            border-radius: 3px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
         }
         button {
-            background: #ff6347;
+            margin-top: 10px;
+            padding: 10px 20px;
             border: none;
+            background: #58d575;
             color: white;
-            padding: 5px 10px;
+            font-size: 16px;
+            border-radius: 5px;
             cursor: pointer;
-            border-radius: 3px;
         }
         button:hover {
-            background: #ff4500;
+            background: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            text-align: left;
+        }
+        #results p {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #results a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        #results a:hover {
+            text-decoration: underline;
         }
     </style>
+
+<script>
+    async function checkFact() {
+        let tweet = document.getElementById("tweetInput").value;
+        let response = await fetch("http://127.0.0.1:5000/fact-check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tweet: tweet })
+        });
+        let data = await response.json();
+        displayResults(data);
+    }
+
+    function displayResults(data) {
+        let resultDiv = document.getElementById("results");
+        resultDiv.innerHTML = `<p><strong>Sentiment:</strong> ${data.sentiment}</p>`;
+        resultDiv.innerHTML += `<p><strong>Topics:</strong> ${data.topics.join(", ")}</p>`;
+        resultDiv.innerHTML += `<h3>Related Articles:</h3>`;
+        
+        if (data.results.length === 0) {
+            resultDiv.innerHTML += "<p>No relevant articles found.</p>";
+            return;
+        }
+
+        data.results.forEach(article => {
+            resultDiv.innerHTML += `<p><a href="${article.url}" target="_blank">${article.title}</a></p>`;
+        });
+    }
+</script>
+
 </head>
 <body>
     <div class="container">
-        <h1>To-Do List</h1>
-        <input type="text" id="taskInput" placeholder="Add a new task...">
-        <button onclick="addTask()">Add</button>
-        <ul id="taskList"></ul>
+        <h1> X Tweet Fact Checker</h1>
+        <textarea id="tweetInput" rows="4" placeholder="Enter tweet..."></textarea>
+        <br>
+        <button onclick="checkFact()">Check Fact</button>
+        <h2>Results:</h2>
+        <div id="results"></div>
     </div>
-
-    <script>
-        function addTask() {
-            const taskInput = document.getElementById('taskInput');
-            const taskList = document.getElementById('taskList');
-
-            if (taskInput.value.trim() !== "") {
-                const li = document.createElement('li');
-                li.textContent = taskInput.value;
-
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.onclick = function() {
-                    taskList.removeChild(li);
-                };
-
-                li.appendChild(deleteButton);
-                taskList.appendChild(li);
-
-                taskInput.value = '';
-            }
-        }
-    </script>
 </body>
 </html>
