@@ -65,8 +65,8 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tweet: tweet })
         });
-        let data = await response.json();
-        displayResults(data);
+        let data = await response.text();
+        document.getElementById("results").innerHTML = `<p><strong>Tweet:</strong> ${text}</p>`;
     }
 
     function displayResults(data) {
