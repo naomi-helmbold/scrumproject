@@ -57,6 +57,35 @@
         }
     </style>
 
+<script>
+    async function checkFact() {
+        let tweet = document.getElementById("tweetInput").value;
+        let response = await fetch("http://127.0.0.1:5000/fact-check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tweet: tweet })
+        });
+        let data = await response.json();
+        displayResults(data);
+    }
+
+    function displayResults(data) {
+        let resultDiv = document.getElementById("results");
+        resultDiv.innerHTML = `<p><strong>Sentiment:</strong> ${data.sentiment}</p>`;
+        resultDiv.innerHTML += `<p><strong>Topics:</strong> ${data.topics.join(", ")}</p>`;
+        resultDiv.innerHTML += `<h3>Related Articles:</h3>`;
+        
+        if (data.results.length === 0) {
+            resultDiv.innerHTML += "<p>No relevant articles found.</p>";
+            return;
+        }
+
+        data.results.forEach(article => {
+            resultDiv.innerHTML += `<p><a href="${article.url}" target="_blank">${article.title}</a></p>`;
+        });
+    }
+</script>
+
 </head>
 <body>
     <div class="container">
