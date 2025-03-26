@@ -3,7 +3,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import requests
 from bs4 import BeautifulSoup
-
+  # Retourne une valeur entre -1 (négatif) et 1 (positif)
+    
 
 # Fonction pour analyser les sentiments avec TextBlob
 def analyze_sentiment(text):
