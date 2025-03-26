@@ -1,3 +1,4 @@
+from flask import Flask, render_template, request
 from textblob import TextBlob
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
@@ -40,25 +41,43 @@ def scrape_news(topics, websites):
 
     return soup
 
-UserInput = "Earth is rounded"
 
-sentiment = analyze_sentiment(UserInput)
+app = Flask(__name__)
 
-topics = identify_topics([UserInput])
-websites = []
-for topic in topics:
-    websites.append('https://www.wikipedia.org/wiki/' + topic)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-#websites = ['https://www.bbc.com/news', 'https://www.cnn.com', 'https://www.wikipedia.org/', 'https://www.lemonde.fr/', 'https://www.foxnews.com/', 'https://www.nbcnews.com/']
-for topic in topics:
-    articles = scrape_news(topic, websites)
+@app.route('/process', methods=['POST'])
+def process():
+    # Get the data from the form
+    input_data = request.form['data']
+        
+        
+    UserInput = input_data
 
-Context = articles.text[articles.text.lower().find(topics[0]) - 1000 : articles.text.lower().find(topics[0]) + 1000]
+    sentiment = analyze_sentiment(UserInput)
 
-query = "According to this context: {Context}, is the statement: {UserInput} true? Give your answer as a yes or no."
-query = query.format(Context=Context, UserInput=UserInput)
+    topics = identify_topics([UserInput])
+    websites = []
+    for topic in topics:
+        websites.append('https://www.wikipedia.org/wiki/' + topic)
 
-ans = teapot_ai.query(
-    query= query
-)
-print(ans)
+    #websites = ['https://www.bbc.com/news', 'https://www.cnn.com', 'https://www.wikipedia.org/', 'https://www.lemonde.fr/', 'https://www.foxnews.com/', 'https://www.nbcnews.com/']
+    for topic in topics:
+        articles = scrape_news(topic, websites)
+
+    Context = articles.text[articles.text.lower().find(topics[0]) - 1000 : articles.text.lower().find(topics[0]) + 1000]
+
+    query = "According to this context: {Context}, is the statement: {UserInput} true? Give your answer as a yes or no."
+    query = query.format(Context=Context, UserInput=UserInput)
+
+    ans = teapot_ai.query(
+        query= query
+    )
+    
+    return f"Processed Data: {ans}"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
