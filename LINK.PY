@@ -10,8 +10,7 @@ def get_tweet():
     # Return the tweet as a JSON response
     return jsonify({"tweet": user_input})
 
-# The results variable is removed because get_tweet() should only be called during a request
-results = get_tweet()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
