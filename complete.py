@@ -5,8 +5,10 @@ import requests
 from bs4 import BeautifulSoup
 # Retourne une valeur entre -1 (négatif) et 1 (positif)
 
+
 # Fonction pour analyser les sentiments avec TextBlob
 def analyze_sentiment(text):
+
 
     blob = TextBlob(text)
 
@@ -23,6 +25,8 @@ def analyze_sentiment(text):
 
 # Fonction pour identifier le sujet avec Latent Dirichlet Allocation (LDA)
 def identify_topics(texts, n_topics=2, n_top_words=5):
+
+
     vectorizer = CountVectorizer(stop_words='english')
     dtm = vectorizer.fit_transform(texts)
 
@@ -54,6 +58,8 @@ for topic in topics:
 
 # Fonction pour scraper les articles de news
 def scrape_news(topics, websites):
+
+
     articles = []
     for website in websites:
         response = requests.get(website)
