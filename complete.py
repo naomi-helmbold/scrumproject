@@ -3,17 +3,14 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import requests
 from bs4 import BeautifulSoup
-# Retourne une valeur entre -1 (négatif) et 1 (positif)
+from teapotai import TeapotAI
 
+teapot_ai = TeapotAI()
 
-# Fonction pour analyser les sentiments avec TextBlob
 def analyze_sentiment(text):
-
     blob = TextBlob(text)
-
-    # Retourne une valeur entre -1 (négatif) et 1 (positif)
-    sentiment = blob.sentiment.polarity
-
+    sentiment = blob.sentiment.polarity  # Retourne une valeur entre -1 (négatif) et 1 (positif)
+    
     if sentiment > 0:
         return 'Positif'
     elif sentiment < 0:
@@ -21,66 +18,54 @@ def analyze_sentiment(text):
     else:
         return 'Neutre'
 
-
 # Fonction pour identifier le sujet avec Latent Dirichlet Allocation (LDA)
-def identify_topics(texts, n_topics=2, n_top_words=5):
-
+def identify_topics(texts, n_topics=1, n_top_words=5):
     vectorizer = CountVectorizer(stop_words='english')
     dtm = vectorizer.fit_transform(texts)
-
+    
     lda = LatentDirichletAllocation(n_components=n_topics, random_state=0)
     lda.fit(dtm)
-
+    
     topics = []
     for idx, topic in enumerate(lda.components_):
-        terms = [vectorizer.get_feature_names_out()[i]
-                 for i in topic.argsort()[:-n_top_words - 1:-1]]
-        topics.append("Topic %d: %s" % (idx, ", ".join(terms)))
+        terms = [vectorizer.get_feature_names_out()[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
+        topics.extend(terms)
     return topics
 
-
-tweet_content = "France is in europe"
-
-print("Contenu du tweet : ", tweet_content)
-
-# Analyse des sentiments
-sentiment = analyze_sentiment(tweet_content)
-print("Sentiment détecté : ", sentiment)
-
-# Identification du sujet
-topics = identify_topics([tweet_content])
-print("Sujets identifiés :")
-for topic in topics:
-    print(topic)
-
-
-# Fonction pour scraper les articles de news
 def scrape_news(topics, websites):
-
-    articles = []
+    articles = []  
     for website in websites:
         response = requests.get(website)
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        for link in soup.find_all('a', href=True):
-            link_text = link.text.strip().lower()
-
-            if all(topic.lower() in link_text for topic in topics):
-                articles.append({'title': link.text.strip(),
-                                 'url': link['href']})
-
-    return articles
+        # for link in soup.find_all('a', href=True):
+        #     link_text = link.text.strip().lower()
 
 
-topics = ['France', 'Europe']
-websites = ['https://www.bbc.com/news',
-            'https://www.cnn.com',
-            'https://www.wikipedia.org/',
-            'https://www.lemonde.fr/',
-            'https://www.washingtonpost.com/',
-            'https://www.foxnews.com/',
-            'https://www.nbcnews.com/']
-articles = scrape_news(topics, websites)
+        #     if all(topic.lower() in link_text for topic in topics):
+        #         articles.append({'title': link.text.strip(), 'url': link['href']})
 
-for article in articles:
-    print(f"Title: {article['title']}, URL: {article['url']}")
+    return soup
+
+UserInput = "Earth is rounded"
+
+sentiment = analyze_sentiment(UserInput)
+
+topics = identify_topics([UserInput])
+websites = []
+for topic in topics:
+    websites.append('https://www.wikipedia.org/wiki/' + topic)
+
+#websites = ['https://www.bbc.com/news', 'https://www.cnn.com', 'https://www.wikipedia.org/', 'https://www.lemonde.fr/', 'https://www.foxnews.com/', 'https://www.nbcnews.com/']
+for topic in topics:
+    articles = scrape_news(topic, websites)
+
+Context = articles.text[articles.text.lower().find(topics[0]) - 1000 : articles.text.lower().find(topics[0]) + 1000]
+
+query = "According to this context: {Context}, is the statement: {UserInput} true? Give your answer as a yes or no."
+query = query.format(Context=Context, UserInput=UserInput)
+
+ans = teapot_ai.query(
+    query= query
+)
+print(ans)
