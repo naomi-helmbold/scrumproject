@@ -51,10 +51,8 @@ app = Flask(__name__)
 @app.route('/', methods=['GET'])
 
 def index():
-    print("Received request")
     input_data = request.args.get('data')  # Get data from query string
     result = None
-    print("Received input:", input_data)
 
     if input_data:
         sentiment = analyze_sentiment(input_data)

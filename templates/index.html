@@ -127,7 +127,7 @@
             <h2>Results :</h2>
             {% if result %}
                 <p><strong>Your Input:</strong> {{ request.args.get('data') }}</p>
-                <p class="{% if result == 'yes' %}yes{% else %}no{% endif %}">
+                <p class="{% if result == 'yes' or result == 'Yes' %}yes{% else %}no{% endif %}">
                     <strong>Fact Check Result:</strong> {{ result }}
                 </p>
             {% endif %}
