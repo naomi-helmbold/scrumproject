@@ -66,7 +66,7 @@
             padding: 20px 20px;
             font-size: 1.2rem;
             color: white;
-            background-color: #58d575;
+            background-color: #007bff; /* Blue button */
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -75,7 +75,7 @@
         }
 
         button:hover {
-            background-color: #4bbf67;
+            background-color: #0056b3;
         }
 
         #results {
@@ -85,7 +85,6 @@
         }
 
         #results p {
-            background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 10px;
@@ -101,20 +100,38 @@
             text-decoration: underline;
         }
 
+        /* Conditional styling for fact check result */
+        .yes {
+            background-color: #28a745; /* Green background for 'yes' */
+            color: white;
+        }
+
+        .no {
+            background-color: #dc3545; /* Red background for 'no' */
+            color: white;
+        }
+
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Fact Checker</h1>
-        <form action="/process" method="POST">
-            <label for="data">Enter text:</label>
-            <input type="text" id="data" name="data" placeholder="Type your text here" required>
-            <button type="submit">Submit</button>
-        </form>
+        <form action="/" method="GET">
+            <label for="data">Enter the tweet:</label>
+            <input type="text" id="data" name="data" placeholder="Enter tweet here" required>
+            <button type="submit">Fact Check !</button>
+        </form>        
 
         <div id="results">
-            <h2>Results:</h2>
+            <h2>Results :</h2>
+            {% if result %}
+                <p><strong>Your Input:</strong> {{ request.args.get('data') }}</p>
+                <p class="{% if result == 'yes' %}yes{% else %}no{% endif %}">
+                    <strong>Fact Check Result:</strong> {{ result }}
+                </p>
+            {% endif %}
         </div>
     </div>
-</body>
+</body>     
 </html>
